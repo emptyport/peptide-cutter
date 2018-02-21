@@ -252,13 +252,93 @@ describe('Enzymes cleaving correctly', function() {
     });
   });
 
-  it('formic acid works', function() {
-    formicAcid = new peptideCutter({
-      'enzyme': 'formic acid'
+  it('glutamyl endopeptidase works', function() {
+    glutamylEndopeptidase = new peptideCutter({
+      'enzyme': 'glutamyl endopeptidase'
     });
-    peptides = formicAcid.cleave('MASSSPECPEPTIDE');
+    peptides = glutamylEndopeptidase.cleave('VERYDIRTYWATER');
     it('peptide should match', function() {
-      peptides[0].should.equal('MASSSPECPEPTID');
+      peptides[0].should.equal('RYDIRTYWAT');
+    });
+  });
+
+  it('granzyme b works', function() {
+    granzymeB = new peptideCutter({
+      'enzyme': 'granzyme b'
+    });
+    peptides = granzymeB.cleave('WATERIEPDPEPTIDE');
+    it('peptide should match', function() {
+      peptides[0].should.equal('WATERIEPD');
+    });
+  });
+
+  it('hydroxylamine works', function() {
+    hydroxylamine = new peptideCutter({
+      'enzyme': 'hydroxylamine'
+    });
+    peptides = hydroxylamine.cleave('WHYNOSLEEPINGINCLASS');
+    it('peptide should match', function() {
+      peptides[0].should.equal('WHYNOSLEEPIN');
+    });
+  });
+
+  it('iodosobenzoic acid works', function() {
+    iodosobenzoicAcid = new peptideCutter({
+      'enzyme': 'iodosobenzoic acid'
+    });
+    peptides = iodosobenzoicAcid.cleave('MASSSPECWINS');
+    it('peptide should match', function() {
+      peptides[0].should.equal('MASSSPECW');
+    });
+  });
+
+  it('lysc works', function() {
+    lysc = new peptideCutter({
+      'enzyme': 'lysc'
+    });
+    peptides = lysc.cleave('PLEASEDRINKWATER');
+    it('peptide should match', function() {
+      peptides[0].should.equal('PLEASEDRINK');
+    });
+  });
+
+  it('ntcb works', function() {
+    ntcb = new peptideCutter({
+      'enzyme': 'ntcb'
+    });
+    peptides = ntcb.cleave('PLEASEDRINKCLEAN');
+    it('peptide should match', function() {
+      peptides[0].should.equal('PLEASEDRINKC');
+    });
+  });
+
+  it('pepsin ph1.3 works', function() {
+    pepsinPH13 = new peptideCutter({
+      'enzyme': 'pepsin ph1.3'
+    });
+    peptides = pepsinPH13.cleave('MAEVPELASEMMAYYSGNEDDLFFEADGPKQMKCSF');
+    it('peptide should match', function() {
+      peptides.length.should.equal(2);
+    });
+  });
+
+  it('pepsin ph2.0 works', function() {
+    pepsinPH20 = new peptideCutter({
+      'enzyme': 'pepsin ph2.0'
+    });
+    peptides = pepsinPH20.cleave('MAEVPELASEMMAYYSGNEDDLFFEADGPKQMKCSF');
+    it('peptide should match', function() {
+      peptides.length.should.equal(1);
+    });
+  });
+
+  it('proline endopeptidase works', function() {
+    prolineEndopeptidase = new peptideCutter({
+      'enzyme': 'proline endopeptidase'
+    });
+    peptides = prolineEndopeptidase.cleave('WATERHPEPTIDEHPPEPTIDE');
+    it('peptide should match', function() {
+      peptides.length.should.equal('EPTIDEHPPEPTIDE');
     });
   });
 
