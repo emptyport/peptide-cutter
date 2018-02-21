@@ -338,7 +338,60 @@ describe('Enzymes cleaving correctly', function() {
     });
     peptides = prolineEndopeptidase.cleave('WATERHPEPTIDEHPPEPTIDE');
     it('peptide should match', function() {
-      peptides.length.should.equal('EPTIDEHPPEPTIDE');
+      peptides[0].should.equal('EPTIDEHPPEPTIDE');
+    });
+  });
+
+  it('proteinase k works', function() {
+    proteinaseK = new peptideCutter({
+      'enzyme': 'proteinase k',
+      'min_length': 4
+    });
+    peptides = proteinaseK.cleave('ILIKEMASSSPEC');
+    it('peptide should match', function() {
+      peptides[0].should.equal('SSSPE');
+    });
+  });
+
+  it('staphylococcal peptidase i works', function() {
+    staphylococcalPeptidaseI = new peptideCutter({
+      'enzyme': 'staphylococcal peptidase i',
+      'min_length': 6
+    });
+    peptides = staphylococcalPeptidaseI.cleave('ILIKEMASSSPEC');
+    it('peptide should match', function() {
+      peptides.length.should.equal('MASSSPE');
+    });
+  });
+
+  it('thermolysin works', function() {
+    thermolysin = new peptideCutter({
+      'enzyme': 'thermolysin',
+      'min_length': 7
+    });
+    peptides = thermolysin.cleave('PLEASESTAYHERE');
+    it('peptide should match', function() {
+      peptides[0].should.equal('LEASEST');
+    });
+  });
+
+  it('thrombin works', function() {
+    thrombin = new peptideCutter({
+      'enzyme': 'thrombin'
+    });
+    peptides = thrombin.cleave('PEPTIDEAAGRG');
+    it('peptide should match', function() {
+      peptides[0].should.equal('PEPTIDEAAGR');
+    });
+  });
+
+  it('trypsin works', function() {
+    trypsin = new peptideCutter({
+      'enzyme': 'trypsin'
+    });
+    peptides = trypsin.cleave('PEPTIDELIKEMEHARPISTPLAY');
+    it('peptide should match', function() {
+      peptides.length.should.equal(2);
     });
   });
 
