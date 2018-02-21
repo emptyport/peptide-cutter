@@ -1,10 +1,10 @@
 {
   "name": "peptide-cutter",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "A library for digesting amino acid sequences using rules from Expasy",
   "main": "index.js",
   "scripts": {
-    "test": "./node_modules/.bin/mocha --harmony"
+    "test": "mocha --harmony"
   },
   "repository": {
     "type": "git",
@@ -29,5 +29,8 @@
     "fs": "0.0.1-security",
     "mocha": "^3.4.2"
   },
-  "dependencies": {}
+  "dependencies": {},
+  "directories": {
+    "test": "test"
+  }
 }
