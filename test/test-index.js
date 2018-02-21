@@ -396,3 +396,33 @@ describe('Enzymes cleaving correctly', function() {
   });
 
 });
+
+describe('Parameters', function() {
+  it('min length works', function() {
+    minLength = new peptideCutter({
+      'enzyme': 'lysc',
+      'min_length': 10
+    });
+    peptides = minLength.cleave('AAAAAAAAAKAAAAAAAAA');
+    peptides.length.should.equal(1);
+  });
+
+  it('max length works', function() {
+    maxLength = new peptideCutter({
+      'enzyme': 'lysc',
+      'max_length': 10
+    });
+    peptides = maxLength.cleave('AAAAAAAAKAAAAAAAAAKAAAAAAAAAAA');
+    peptides.length.should.equal(2);
+  });
+
+  it('missed cleavages works', function() {
+    missed = new peptideCutter({
+      'enzyme': 'lysc',
+      'min_length': 2,
+      'num_missed_cleavages': 2
+    });
+    peptides = missed.cleave('AKGKYK');
+    peptides.length.should.equal(6);
+  });
+});

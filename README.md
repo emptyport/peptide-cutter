@@ -7,6 +7,10 @@ View on npm [here](https://www.npmjs.com/package/peptide-cutter).
 ## Installation
 npm install peptide-cutter --save
 
+> **PLEASE NOTE**
+>
+> This module relies on positive lookbehind regex and thus can only be run with newer versions of JavaScript. You may need to use the ```--harmony``` argument with node in order to use this module.
+
 ## Usage
 ``` javascript
 var peptideCutter = require('peptide-cutter');
@@ -23,8 +27,41 @@ var cutter = new peptideCutter(options);
 var peptides = cutter.cleave("KARATE");
 ```
 
+## About
+The regex for the cleavage sites was ~~stolen~~ borrowed from the [Pyteomics](https://pypi.python.org/pypi/pyteomics) package which in turn comes from the [Expasy PeptideCutter](https://web.expasy.org/peptide_cutter/).
+
+### Available enzymes
+* arg-c
+* asp-n
+* bnps-skatole
+* caspase 1-10
+* chymotrypsin high specificity
+* chymotrypsin low specificity
+* clostripain
+* cnbr
+* enterokinase
+* factor xa
+* formic acid
+* glutamyl endopeptidase
+* granzyme b
+* hydroxylamine
+* iodosobenzoic acid
+* lysc
+* ntcb
+* pepsin ph1.3
+* pepsin ph2.0
+* proline endopeptidase
+* proteinase k
+* staphylococcal peptidase i
+* thermolysin
+* thrombin
+* trypsin
+
+The available enzymes and their corresponding regex are also found in ```expasy_rules.json```
+
+
 ## Tests
-You can run `npm test` to run the tests after installing the development dependencies.
+You can run `npm test` to run the tests after installing the development dependencies. There are basic tests to make sure all the enzymes will cleave proteins, but I cannot guarantee their completeness.
 
 ## Future functionality
 There are currently no planned improvements to this module. I am open to suggestions so let me know if you think something is missing.
