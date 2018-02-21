@@ -29,9 +29,5 @@
     "fs": "0.0.1-security",
     "mocha": "^3.4.2"
   },
-  "dependencies": {
-    "lodash.merge": "^4.6.1",
-    "xregexp": "^4.0.0",
-    "xregexp-lookbehind": "^1.0.0"
-  }
+  "dependencies": {}
 }
