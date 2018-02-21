@@ -1,7 +1,7 @@
 var expasy_rules = require('./expasy_rules.json');
 
 module.exports = class PeptideCutter {
-  constructor(options) {
+  constructor(options = {}) {
     // These are the default values. They will
     // be overwritten by anything passed in 
     // through the options
@@ -40,16 +40,25 @@ module.exports = class PeptideCutter {
     }
   }
 
+  uniqueFilter(value, index, self) {
+    return self.indexOf(value) === index;
+  }
+
   cleave(sequence) {
+    sequence = sequence.toUpperCase();
+    var peptides = [];
     var num_missed = this.num_missed_cleavages;
-    var indices = [];
+
+    // Gather the cleavage sites
+    var indices = [0];
     var m;
     do {
       m = this.regex.exec(sequence);
       if (m) {
-        indices.push(m.index);
+        indices.push(m.index + 1);
       }
     } while (m);
+    indices.push(sequence.length);
 
     // If there are only 3 cleavage sites there
     // is no reason to allow more than 3 missed
@@ -58,10 +67,25 @@ module.exports = class PeptideCutter {
       num_missed = indices.length;
     }
 
+    for(var i=0; i<indices.length; i++) {
+      for(var j=i; j<indices.length; j++) {
+        if(j-i-1 > num_missed) {
+          break;
+        }
+        var start_index = indices[i];
+        var end_index = indices[j];
+        if(start_index === end_index) {
+          continue;
+        }
+        if(end_index - start_index >= this.min_length && end_index - start_index <= this.max_length) {
+          peptides.push(sequence.substring(start_index, end_index));
+        }
+      }
+    }
 
+    peptides = peptides.filter(this.uniqueFilter);
 
+    return peptides;
   }
-
-  
 
 }

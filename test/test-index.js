@@ -1,96 +1,265 @@
 var should = require('chai').should();
-var molFormula = require('../index');
+var peptideCutter = require('../index');
 
-describe('Molecular Formula', function() {
-  empty = new molFormula('');
+const interleukinBeta = "MAEVPELASEMMAYYSGNEDDLFFEADGPKQMKCSFQDLDLCPLDGGIQLRISDHHYSKGFRQAASVVVAMDKLRKMLVPCPQTFQENDLSTFFPFIFEEEPIFFDTWDNEAYVHDAPVRSLNCTLRDSQQKSLVMSGPYELKALHLQGQDMEQQVVFSMSFVQGEESNDKIPVALGLKEKNLYLSCVLKDDKPTLQLESVDPKNYPKKKMEKRFVFNKIEINNKLEFESAQFPNWYISTSQAENMPVFLGGTKGGQDITDFTMQFVSS";
 
-  it('returns {} for composition if blank string passed in', function() {
-    empty.getComposition().should.deep.equal({});
+describe('Default Values', function() {
+  defaultValues = new peptideCutter();
+
+  it('enzyme is trypsin', function() {
+    defaultValues.enzyme.should.equal('trypsin');
+  });
+  it('missed cleavages is 0', function() {
+    defaultValues.num_missed_cleavages.should.equal(0);
+  });
+  it('min length is 8', function() {
+    defaultValues.min_length.should.equal(8);
+  });
+  it('max length is 30', function() {
+    defaultValues.max_length.should.equal(30);
+  });
+  it('regex should be for trypsin', function() {
+    regex = new RegExp("([KR](?=[^P]))|((?<=W)K(?=P))|((?<=M)R(?=P))", "g");
+    defaultValues.regex.should.match(regex);
   });
 });
 
-describe('Simple Formula', function() {
-  mf = new molFormula('H2O');
-
-  it('formula for H2O matches', function() {
-    mf.getFormula().should.equal('H2O');
+describe('Setting Values', function() {
+  passedValues = new peptideCutter({
+    'enzyme': 'lysc',
+    'num_missed_cleavages': 2,
+    'min_length': 6,
+    'max_length': 24
   });
 
-  it('simplified formula for H2O matches', function() {
-    mf.getSimplifiedFormula().should.equal('H2O');
+  it('enzyme is lysc', function() {
+    passedValues.enzyme.should.equal('lysc');
   });
-
-  it('composition for H2O matches', function() {
-    var composition = mf.getComposition();
-    Object.keys(composition).length.should.equal(2);
-    composition['H'].should.equal(2);
-    composition['O'].should.equal(1);
-    mf.getComposition().should.deep.equal({ H: 2, O: 1});
+  it('missed cleavages is 2', function() {
+    passedValues.num_missed_cleavages.should.equal(2);
   });
-});
-
-describe('Complex Formula', function() {
-  formula = new molFormula('Na2(OH)2CH4(Na(Cl)2)2U(CN)');
-
-  it('formula for H2O matches', function() {
-    formula.getFormula().should.equal('Na2(OH)2CH4(Na(Cl)2)2U(CN)');
+  it('min length is 6', function() {
+    passedValues.min_length.should.equal(6);
   });
-
-  it('simplified formula for H2O matches', function() {
-    formula.getSimplifiedFormula().should.equal('Na4O2H6C2Cl4UN');
+  it('max length is 24', function() {
+    passedValues.max_length.should.equal(24);
   });
-
-  it('composition for H2O matches', function() {
-    var composition = formula.getComposition();
-    Object.keys(composition).length.should.equal(7);
-    composition['Na'].should.equal(4);
-    composition['O'].should.equal(2);
-    composition['H'].should.equal(6);
-    composition['C'].should.equal(2);
-    composition['Cl'].should.equal(4);
-    composition['U'].should.equal(1);
-    composition['N'].should.equal(1);
-    formula.getComposition().should.deep.equal({ Na: 4, O: 2, H: 6, C: 2, Cl: 4, U: 1, N: 1});
+  it('regex should be for lysc', function() {
+    regex = new RegExp("K", "g");
+    passedValues.regex.should.match(regex);
   });
 });
 
-describe('Adding and Subtracting Formulae', function() {
-  methyl = new molFormula('CH3');
-
-  it('can add string', function() {
-    methyl.add('(CH3)2');
-    methyl.getSimplifiedFormula().should.equal('C3H9');
-    methyl.getFormula().should.equal('C3H9');
+describe('Enzymes cleaving correctly', function() {
+  it('arg-c works', function() {
+    argc = new peptideCutter({
+      'enzyme': 'arg-c'
+    });
+    peptides = argc.cleave('ARGININE');
+    it('peptide should match', function() {
+      peptides[0].should.equal('GININE');
+    });
   });
 
-  it('can add json', function() {
-    methyl.add({'C': 1, 'Na': 2});
-    methyl.getSimplifiedFormula().should.equal('C4H9Na2');
-    methyl.getFormula().should.equal('C4H9Na2');
+  it('asp-n works', function() {
+    aspn = new peptideCutter({
+      'enzyme': 'asp-n'
+    });
+    peptides = aspn.cleave('MYPEPTIDE');
+    it('peptide should match', function() {
+      peptides[0].should.equal('MYPEPTI');
+    });
   });
 
-  it('can subtract string', function() {
-    methyl.subtract('(NaCl)2');
-    methyl.getSimplifiedFormula().should.equal('C4H9');
-    methyl.getFormula().should.equal('C4H9');
+  it('bnps-skatole works', function() {
+    bnps = new peptideCutter({
+      'enzyme': 'bnps-skatole'
+    });
+    peptides = bnps.cleave('VERYDIRTYWATER');
+    it('peptide should match', function() {
+      peptides[0].should.equal('VERYDIRTY');
+    });
   });
 
-  it('can subtract json', function() {
-    methyl.subtract({'C': 3, 'H': 6});
-    methyl.getSimplifiedFormula().should.equal('CH3');
-    methyl.getFormula().should.equal('CH3');
-  });
-});
-
-describe('Molecular Masses', function() {
-  water = new molFormula('H2O');
-  decane = new molFormula('CH3(CH2)8CH3');
-  
-  it('water mass is correct', function() {
-    water.getMass().should.equal(18.01528);
+  it('caspase 1 works', function() {
+    caspase1 = new peptideCutter({
+      'enzyme': 'caspase 1'
+    });
+    peptides = caspase1.cleave(interleukinBeta);
+    it('peptide should match', function() {
+      peptides.length.should.equal(1);
+      peptide[0].should.equal('MAEVPELASEMMAYYSGNEDDLFFEAD');
+    });
   });
 
-  it('decane mass is correct', function() {
-    decane.getMass().should.equal(142.28208);
+  it('caspase 2 works', function() {
+    caspase2 = new peptideCutter({
+      'enzyme': 'caspase 2'
+    });
+    peptides = caspase2.cleave('PEPTIDEDVADYTRRHL');
+    it('peptide should match', function() {
+      peptide[0].should.equal('PEPTIDEDVAD');
+    });
   });
+
+  it('caspase 3 works', function() {
+    caspase3 = new peptideCutter({
+      'enzyme': 'caspase 3'
+    });
+    peptides = caspase3.cleave('PEPTIDEDMQDYTRRHL');
+    it('peptide should match', function() {
+      peptide[0].should.equal('PEPTIDEDMQD');
+    });
+  });
+
+  it('caspase 4 works', function() {
+    caspase4 = new peptideCutter({
+      'enzyme': 'caspase 4'
+    });
+    peptides = caspase4.cleave('PEPTIDELEHDAYTRRHL');
+    it('peptide should match', function() {
+      peptide[0].should.equal('PEPTIDELEHD');
+    });
+  });
+
+  it('caspase 5 works', function() {
+    caspase5 = new peptideCutter({
+      'enzyme': 'caspase 5'
+    });
+    peptides = caspase5.cleave('PEPTIDELEHDAYTRRHL');
+    it('peptide should match', function() {
+      peptide[0].should.equal('PEPTIDELEHD');
+    });
+  });
+
+  it('caspase 6 works', function() {
+    caspase6 = new peptideCutter({
+      'enzyme': 'caspase 6'
+    });
+    peptides = caspase6.cleave('PEPTIDEVEIDAYTRRHL');
+    it('peptide should match', function() {
+      peptide[0].should.equal('PEPTIDEVEID');
+    });
+  });
+
+  it('caspase 7 works', function() {
+    caspase7 = new peptideCutter({
+      'enzyme': 'caspase 7'
+    });
+    peptides = caspase7.cleave('PEPTIDEDEVDAYTRRHL');
+    it('peptide should match', function() {
+      peptide[0].should.equal('PEPTIDEDEVD');
+    });
+  });
+
+  it('caspase 8 works', function() {
+    caspase8 = new peptideCutter({
+      'enzyme': 'caspase 8'
+    });
+    peptides = caspase8.cleave('PEPTIDEIETDAYTRRHL');
+    it('peptide should match', function() {
+      peptide[0].should.equal('PEPTIDEIETD');
+    });
+  });
+
+  it('caspase 9 works', function() {
+    caspase9 = new peptideCutter({
+      'enzyme': 'caspase 9'
+    });
+    peptides = caspase9.cleave('PEPTIDELEHDAYTRRHL');
+    it('peptide should match', function() {
+      peptide[0].should.equal('PEPTIDELEHD');
+    });
+  });
+
+  it('caspase 10 works', function() {
+    caspase10 = new peptideCutter({
+      'enzyme': 'caspase 10'
+    });
+    peptides = caspase10.cleave('PEPTIDEIEADAYTRRHL');
+    it('peptide should match', function() {
+      peptide[0].should.equal('PEPTIDEIEAD');
+    });
+  });
+
+  it('chymotrypsin high specificity works', function() {
+    chymotrypsinHi = new peptideCutter({
+      'enzyme': 'chymotrypsin high specificity'
+    });
+    peptides = chymotrypsinHi.cleave('PEPTIDEFAPEPTIDEMAPEPTIDEFPEPTIDE');
+    it('peptides should match', function() {
+      peptides.length.should.equal(2);
+    });
+  });
+
+  it('chymotrypsin low specificity works', function() {
+    chymotrypsinLo = new peptideCutter({
+      'enzyme': 'chymotrypsin low specificity'
+    });
+    peptides = chymotrypsinLo.cleave('PEPTIDEFAPEPTIDEMAPEPTIDEFPEPTIDE');
+    it('peptides should match', function() {
+      peptides.length.should.equal(3);
+    });
+  });
+
+  it('clostripain works', function() {
+    clostripain = new peptideCutter({
+      'enzyme': 'clostripain'
+    });
+    peptides = clostripain.cleave('ARGININE');
+    it('peptide should match', function() {
+      peptides[0].should.equal('GININE');
+    });
+  });
+
+  it('cnbr works', function() {
+    cnbr = new peptideCutter({
+      'enzyme': 'cnbr'
+    });
+    peptides = cnbr.cleave('IREALLYLIKEMASSSPEC');
+    it('peptide should match', function() {
+      peptides[0].should.equal('IREALLYLIKEM');
+    });
+  });
+
+  it('enterokinase works', function() {
+    enterokinase = new peptideCutter({
+      'enzyme': 'enterokinase'
+    });
+    peptides = enterokinase.cleave('PEPTIDEDDDKHI');
+    it('peptide should match', function() {
+      peptides[0].should.equal('PEPTIDEDDDK');
+    });
+  });
+
+  it('factor xa works', function() {
+    factorXa = new peptideCutter({
+      'enzyme': 'factor xa'
+    });
+    peptides = factorXa.cleave('PEPTIDEIDGRHI');
+    it('peptide should match', function() {
+      peptides[0].should.equal('PEPTIDEIDGR');
+    });
+  });
+
+  it('formic acid works', function() {
+    formicAcid = new peptideCutter({
+      'enzyme': 'formic acid'
+    });
+    peptides = formicAcid.cleave('MASSSPECPEPTIDE');
+    it('peptide should match', function() {
+      peptides[0].should.equal('MASSSPECPEPTID');
+    });
+  });
+
+  it('formic acid works', function() {
+    formicAcid = new peptideCutter({
+      'enzyme': 'formic acid'
+    });
+    peptides = formicAcid.cleave('MASSSPECPEPTIDE');
+    it('peptide should match', function() {
+      peptides[0].should.equal('MASSSPECPEPTID');
+    });
+  });
+
 });
