@@ -40,10 +40,6 @@ module.exports = class PeptideCutter {
     }
   }
 
-  uniqueFilter(value, index, self) {
-    return self.indexOf(value) === index;
-  }
-
   cleave(sequence) {
     sequence = sequence.toUpperCase();
     var peptides = [];
@@ -78,12 +74,15 @@ module.exports = class PeptideCutter {
           continue;
         }
         if(end_index - start_index >= this.min_length && end_index - start_index <= this.max_length) {
-          peptides.push(sequence.substring(start_index, end_index));
+          peptides.push({
+            sequence: sequence.substring(start_index, end_index),
+            start: start_index,
+            end: end_index-1,
+            missed: j-i-1
+          });
         }
       }
     }
-
-    peptides = peptides.filter(this.uniqueFilter);
 
     return peptides;
   }

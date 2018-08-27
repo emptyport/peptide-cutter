@@ -8,7 +8,7 @@ var cut = new peptide_cutter({
 });
 console.log(cut);
 
-var peptides = cut.cleave("MRPAAAWKPAAAMKPAAAWRPAAAKIIIRPNNN");
+var peptides = cut.cleave("MRMRPAAAWKPAAAMKPAAAWRPAAAKIIIRPNNN");
 for(var i=0; i<peptides.length; i++) {
     console.log(peptides[i]);
 }

@@ -1,55 +1,39 @@
-var should = require('chai').should();
 var peptideCutter = require('../index');
+let test = require('tape');
 
 const interleukinBeta = "MAEVPELASEMMAYYSGNEDDLFFEADGPKQMKCSFQDLDLCPLDGGIQLRISDHHYSKGFRQAASVVVAMDKLRKMLVPCPQTFQENDLSTFFPFIFEEEPIFFDTWDNEAYVHDAPVRSLNCTLRDSQQKSLVMSGPYELKALHLQGQDMEQQVVFSMSFVQGEESNDKIPVALGLKEKNLYLSCVLKDDKPTLQLESVDPKNYPKKKMEKRFVFNKIEINNKLEFESAQFPNWYISTSQAENMPVFLGGTKGGQDITDFTMQFVSS";
 
-describe('Default Values', function() {
-  defaultValues = new peptideCutter();
+test('Default Values', function(t) {
+  let defaultValues = new peptideCutter();
+  let regex = new RegExp("([KR](?=[^P]))|((?<=W)K(?=P))|((?<=M)R(?=P))", "g");
 
-  it('enzyme is trypsin', function() {
-    defaultValues.enzyme.should.equal('trypsin');
-  });
-  it('missed cleavages is 0', function() {
-    defaultValues.num_missed_cleavages.should.equal(0);
-  });
-  it('min length is 8', function() {
-    defaultValues.min_length.should.equal(8);
-  });
-  it('max length is 30', function() {
-    defaultValues.max_length.should.equal(30);
-  });
-  it('regex should be for trypsin', function() {
-    regex = new RegExp("([KR](?=[^P]))|((?<=W)K(?=P))|((?<=M)R(?=P))", "g");
-    defaultValues.regex.should.match(regex);
-  });
+  t.equal(defaultValues.enzyme, 'trypsin', 'enzyme is trypsin');
+  t.equal(defaultValues.num_missed_cleavages, 0, 'missed cleavages is 0');
+  t.equal(defaultValues.min_length, 8, 'min length is 8');
+  t.equal(defaultValues.max_length, 30, 'max length is 30');
+  t.equal(defaultValues.regex.toString(), regex.toString(), 'regex should be for trypsin');
+
+  t.end();
 });
 
-describe('Setting Values', function() {
-  passedValues = new peptideCutter({
+test('Setting Values', function(t) {
+  let passedValues = new peptideCutter({
     'enzyme': 'lysc',
     'num_missed_cleavages': 2,
     'min_length': 6,
     'max_length': 24
   });
+  let regex = new RegExp("K", "g");
 
-  it('enzyme is lysc', function() {
-    passedValues.enzyme.should.equal('lysc');
-  });
-  it('missed cleavages is 2', function() {
-    passedValues.num_missed_cleavages.should.equal(2);
-  });
-  it('min length is 6', function() {
-    passedValues.min_length.should.equal(6);
-  });
-  it('max length is 24', function() {
-    passedValues.max_length.should.equal(24);
-  });
-  it('regex should be for lysc', function() {
-    regex = new RegExp("K", "g");
-    passedValues.regex.should.match(regex);
-  });
+  t.equal(passedValues.enzyme, 'lysc', 'enzyme is lysc');
+  t.equal(passedValues.num_missed_cleavages, 2, 'missed cleavages is 2');
+  t.equal(passedValues.min_length, 6, 'min length is 6');
+  t.equal(passedValues.max_length, 24, 'max length is 24');
+  t.equal(passedValues.regex.toString(), regex.toString(), 'regex should be for lysc');
+
+  t.end();
 });
-
+/*
 describe('Enzymes cleaving correctly', function() {
   it('arg-c works', function() {
     argc = new peptideCutter({
@@ -57,7 +41,7 @@ describe('Enzymes cleaving correctly', function() {
     });
     peptides = argc.cleave('ARGININE');
     it('peptide should match', function() {
-      peptides[0].should.equal('GININE');
+      peptides[0].sequence.should.equal('GININE');
     });
   });
 
@@ -67,7 +51,7 @@ describe('Enzymes cleaving correctly', function() {
     });
     peptides = aspn.cleave('MYPEPTIDE');
     it('peptide should match', function() {
-      peptides[0].should.equal('MYPEPTI');
+      peptides[0].sequence.should.equal('MYPEPTI');
     });
   });
 
@@ -426,3 +410,5 @@ describe('Parameters', function() {
     peptides.length.should.equal(6);
   });
 });
+
+*/
