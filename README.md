@@ -1,4 +1,9 @@
 # Peptide Cutter
+
+[![Build Status](https://travis-ci.org/emptyport/peptide-cutter.svg?branch=master)](https://travis-ci.org/emptyport/peptide-cutter)
+[![codecov](https://codecov.io/gh/emptyport/peptide-cutter/branch/master/graph/badge.svg)](https://codecov.io/gh/emptyport/peptide-cutter)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
 A library for *in silico* proteolytic digestion of proteins and peptides.
 
 View on npm [here](https://www.npmjs.com/package/peptide-cutter).
@@ -10,6 +15,10 @@ npm install peptide-cutter --save
 > **PLEASE NOTE**
 >
 > This module relies on positive lookbehind regex and thus can only be run with newer versions of JavaScript. You may need to use the ```--harmony``` argument with node in order to use this module.
+
+> **Also note**
+>
+> v2.x.x introduces breaking changes from v1.x.x in the return format
 
 ## Usage
 ``` javascript
@@ -26,6 +35,19 @@ var cutter = new peptideCutter(options);
 
 var peptides = cutter.cleave("KARATE");
 ```
+
+Return format:
+```javascript
+[ { sequence: 'KAR', start: 0, end: 2, missed: 1 },
+  { sequence: 'KARATE', start: 0, end: 5, missed: 2 },
+  { sequence: 'AR', start: 1, end: 2, missed: 0 },
+  { sequence: 'ARATE', start: 1, end: 5, missed: 1 },
+  { sequence: 'ATE', start: 3, end: 5, missed: 0 } ]
+```
+* `sequence` is the digested fragment
+* `start` is the 0-based index of where in the original sequence the fragment can be found
+* `end` is the 0-based index of where in the original sequence the fragment ends (this value is inclusive)
+* `missed` is the number of missed cleavages found in this particular fragment.
 
 ## About
 The regex for the cleavage sites was ~~stolen~~ borrowed from the [Pyteomics](https://pypi.python.org/pypi/pyteomics) package which in turn comes from the [Expasy PeptideCutter](https://web.expasy.org/peptide_cutter/).

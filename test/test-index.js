@@ -34,6 +34,21 @@ test('Setting Values', function(t) {
   t.end();
 });
 
+test('Setting invalid values', function(t) {
+  let cutter = new peptideCutter({
+    'enzyme': 'scooby doo',
+    'num_missed_cleavages': -1,
+    'min_length': 23,
+    'max_length': 2
+  });
+
+  t.equal(cutter.enzyme, 'trypsin', 'Enzyme defaults to trypsin');
+  t.equal(cutter.num_missed_cleavages, 0, 'Missed cleavages set to 0');
+  t.equal(cutter.min_length, 8, 'Min length set to 8');
+  t.equal(cutter.max_length, 30, 'Max length set to 30');
+  t.end();
+});
+
 test('Enzymes cleaving correctly', function(t) {
   let peptides = testEnzyme('arg-c', 5, 'ARGININE');
   t.equal(peptides[0].sequence, 'GININE', 'arg-c works');
@@ -163,7 +178,7 @@ test('Parameters', function(t) {
   });
   peptides = missed.cleave('AKGKYK');
   t.equal(peptides.length, 6, 'Missed cleavages work');
-  
+
   t.end();
 });
 

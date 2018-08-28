@@ -20,3 +20,15 @@ let missed = new peptide_cutter({
   });
   peptides = missed.cleave('AKGKYK');
   console.log(peptides);
+
+  var options = {
+    'enzyme': 'trypsin',
+    'num_missed_cleavages': 2,
+    'min_length': 2,
+    'max_length': 30
+  };
+  
+  var cutter = new peptide_cutter(options);
+  
+  peptides = cutter.cleave("KARATE");
+  console.log(peptides);
