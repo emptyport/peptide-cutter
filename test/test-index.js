@@ -63,6 +63,107 @@ test('Enzymes cleaving correctly', function(t) {
   peptides = testEnzyme('caspase 6', 8, 'PEPTIDEVEIDAYTRRHL');
   t.equal(peptides[0].sequence, 'PEPTIDEVEID', 'caspase 6 works');
 
+  peptides = testEnzyme('caspase 7', 8, 'PEPTIDEDEVDAYTRRHL');
+  t.equal(peptides[0].sequence, 'PEPTIDEDEVD', 'caspase 7 works');
+
+  peptides = testEnzyme('caspase 8', 8, 'PEPTIDEIETDAYTRRHL');
+  t.equal(peptides[0].sequence, 'PEPTIDEIETD', 'caspase 8 works');
+
+  peptides = testEnzyme('caspase 9', 8, 'PEPTIDELEHDAYTRRHL');
+  t.equal(peptides[0].sequence, 'PEPTIDELEHD', 'caspase 9 works');
+
+  peptides = testEnzyme('caspase 10', 8, 'PEPTIDEIEADAYTRRHL');
+  t.equal(peptides[0].sequence, 'PEPTIDEIEAD', 'caspase 10 works');
+
+  peptides = testEnzyme('chymotrypsin high specificity', 8, 'PEPTIDEFAPEPTIDEMAPEPTIDEFPEPTIDE');
+  t.equal(peptides.length, 2, 'chymotrypsin high specificity works');
+
+  peptides = testEnzyme('chymotrypsin low specificity', 8, 'PEPTIDEFAPEPTIDEMAPEPTIDEFPEPTIDE');
+  t.equal(peptides.length, 3, 'chymotrypsin low specificity works');
+
+  peptides = testEnzyme('clostripain', 6, 'ARGININE');
+  t.equal(peptides[0].sequence, 'GININE', 'clostripain works');
+
+  peptides = testEnzyme('cnbr', 8, 'IREALLYLIKEMASSSPEC');
+  t.equal(peptides[0].sequence, 'IREALLYLIKEM', 'cnbr works');
+
+  peptides = testEnzyme('enterokinase', 8, 'PEPTIDEDDDKHI');
+  t.equal(peptides[0].sequence, 'PEPTIDEDDDK', 'enterokinase works');
+
+  peptides = testEnzyme('factor xa', 8, 'PEPTIDEIDGRHI');
+  t.equal(peptides[0].sequence, 'PEPTIDEIDGR', 'factor xa works');
+
+  peptides = testEnzyme('formic acid', 8, 'MASSSPECPEPTIDE');
+  t.equal(peptides[0].sequence, 'MASSSPECPEPTID', 'formic acid works');
+
+  peptides = testEnzyme('glutamyl endopeptidase', 8, 'VERYDIRTYWATER');
+  t.equal(peptides[0].sequence, 'RYDIRTYWATE', 'glutamyl endopeptidase works');
+
+  peptides = testEnzyme('granzyme b', 8, 'WATERIEPDPEPTIDE');
+  t.equal(peptides[0].sequence, 'WATERIEPD', 'granzyme b works');
+
+  peptides = testEnzyme('hydroxylamine', 8, 'WHYNOSLEEPINGINCLASS');
+  t.equal(peptides[0].sequence, 'WHYNOSLEEPIN', 'hydroxylamine works');
+
+  peptides = testEnzyme('iodosobenzoic acid', 8, 'MASSSPECWINS');
+  t.equal(peptides[0].sequence, 'MASSSPECW', 'iodosobenzoic acid works');
+
+  peptides = testEnzyme('lysc', 8, 'PLEASEDRINKWATER');
+  t.equal(peptides[0].sequence, 'PLEASEDRINK', 'lysc works');
+
+  peptides = testEnzyme('ntcb', 8, 'PLEASEDRINKCLEAN');
+  t.equal(peptides[0].sequence, 'PLEASEDRINK', 'ntcb works');
+
+  peptides = testEnzyme('pepsin ph1.3', 8, 'MAEVPELASEMMAYYSGNEDDLFFEADGPKQMKCSF');
+  t.equal(peptides.length, 2, 'pepsin ph1.3 works');
+
+  peptides = testEnzyme('pepsin ph2.0', 8, 'MAEVPELASEMMAYYSGNEDDLFFEADGPKQMKCSF');
+  t.equal(peptides.length, 1, 'pepsin ph2.0 works');
+
+  peptides = testEnzyme('proline endopeptidase', 8, 'WATERHPEPTIDEHPPEPTIDE');
+  t.equal(peptides[0].sequence, 'EPTIDEHPPEPTIDE', 'proline endopeptidase works');
+
+  peptides = testEnzyme('proteinase k', 4, 'ILIKEMASSSPEC');
+  t.equal(peptides[0].sequence, 'SSSPE', 'proteinase k works');
+
+  peptides = testEnzyme('staphylococcal peptidase i', 6, 'ILIKEMASSSPEC');
+  t.equal(peptides[0].sequence, 'MASSSPE', 'staphylococcal peptidase i works');
+
+  peptides = testEnzyme('thermolysin', 7, 'PLEASESTAYHERE');
+  t.equal(peptides[0].sequence, 'LEASEST', 'thermolysin works');
+
+  peptides = testEnzyme('thrombin', 8, 'PEPTIDEAAGRG');
+  t.equal(peptides[0].sequence, 'PEPTIDEAAGR', 'thrombin works');
+
+  peptides = testEnzyme('trypsin', 8, 'PEPTIDELIKEMEHARPISTPLAY');
+  t.equal(peptides.length, 2, 'trypsin works');
+
+  t.end();
+});
+
+test('Parameters', function(t) {
+  let minLength = new peptideCutter({
+    'enzyme': 'lysc',
+    'min_length': 10
+  });
+  let peptides = minLength.cleave('AAAAAAAAAKAAAAAAAAA');
+  t.equal(peptides.length, 1, 'Min length works');
+
+  let maxLength = new peptideCutter({
+    'enzyme': 'lysc',
+    'max_length': 10
+  });
+  peptides = maxLength.cleave('AAAAAAAAKAAAAAAAAAKAAAAAAAAAAA');
+  t.equal(peptides.length, 2, 'Max length works');
+
+  let missed = new peptideCutter({
+    'enzyme': 'lysc',
+    'min_length': 2,
+    'num_missed_cleavages': 2
+  });
+  peptides = missed.cleave('AKGKYK');
+  t.equal(peptides.length, 6, 'Missed cleavages work');
+  
   t.end();
 });
 
@@ -75,291 +176,8 @@ function testEnzyme(enzyme, min_length, sequence) {
   return peptides;
 }
 /*  
-describe('Enzymes cleaving correctly', function() {
-
-  it('caspase 6 works', function() {
-    caspase6 = new peptideCutter({
-      'enzyme': 'caspase 6'
-    });
-    peptides = caspase6.cleave('PEPTIDEVEIDAYTRRHL');
-    it('peptide should match', function() {
-      peptide[0].should.equal('PEPTIDEVEID');
-    });
-  });
-
-  it('caspase 7 works', function() {
-    caspase7 = new peptideCutter({
-      'enzyme': 'caspase 7'
-    });
-    peptides = caspase7.cleave('PEPTIDEDEVDAYTRRHL');
-    it('peptide should match', function() {
-      peptide[0].should.equal('PEPTIDEDEVD');
-    });
-  });
-
-  it('caspase 8 works', function() {
-    caspase8 = new peptideCutter({
-      'enzyme': 'caspase 8'
-    });
-    peptides = caspase8.cleave('PEPTIDEIETDAYTRRHL');
-    it('peptide should match', function() {
-      peptide[0].should.equal('PEPTIDEIETD');
-    });
-  });
-
-  it('caspase 9 works', function() {
-    caspase9 = new peptideCutter({
-      'enzyme': 'caspase 9'
-    });
-    peptides = caspase9.cleave('PEPTIDELEHDAYTRRHL');
-    it('peptide should match', function() {
-      peptide[0].should.equal('PEPTIDELEHD');
-    });
-  });
-
-  it('caspase 10 works', function() {
-    caspase10 = new peptideCutter({
-      'enzyme': 'caspase 10'
-    });
-    peptides = caspase10.cleave('PEPTIDEIEADAYTRRHL');
-    it('peptide should match', function() {
-      peptide[0].should.equal('PEPTIDEIEAD');
-    });
-  });
-
-  it('chymotrypsin high specificity works', function() {
-    chymotrypsinHi = new peptideCutter({
-      'enzyme': 'chymotrypsin high specificity'
-    });
-    peptides = chymotrypsinHi.cleave('PEPTIDEFAPEPTIDEMAPEPTIDEFPEPTIDE');
-    it('peptides should match', function() {
-      peptides.length.should.equal(2);
-    });
-  });
-
-  it('chymotrypsin low specificity works', function() {
-    chymotrypsinLo = new peptideCutter({
-      'enzyme': 'chymotrypsin low specificity'
-    });
-    peptides = chymotrypsinLo.cleave('PEPTIDEFAPEPTIDEMAPEPTIDEFPEPTIDE');
-    it('peptides should match', function() {
-      peptides.length.should.equal(3);
-    });
-  });
-
-  it('clostripain works', function() {
-    clostripain = new peptideCutter({
-      'enzyme': 'clostripain'
-    });
-    peptides = clostripain.cleave('ARGININE');
-    it('peptide should match', function() {
-      peptides[0].should.equal('GININE');
-    });
-  });
-
-  it('cnbr works', function() {
-    cnbr = new peptideCutter({
-      'enzyme': 'cnbr'
-    });
-    peptides = cnbr.cleave('IREALLYLIKEMASSSPEC');
-    it('peptide should match', function() {
-      peptides[0].should.equal('IREALLYLIKEM');
-    });
-  });
-
-  it('enterokinase works', function() {
-    enterokinase = new peptideCutter({
-      'enzyme': 'enterokinase'
-    });
-    peptides = enterokinase.cleave('PEPTIDEDDDKHI');
-    it('peptide should match', function() {
-      peptides[0].should.equal('PEPTIDEDDDK');
-    });
-  });
-
-  it('factor xa works', function() {
-    factorXa = new peptideCutter({
-      'enzyme': 'factor xa'
-    });
-    peptides = factorXa.cleave('PEPTIDEIDGRHI');
-    it('peptide should match', function() {
-      peptides[0].should.equal('PEPTIDEIDGR');
-    });
-  });
-
-  it('formic acid works', function() {
-    formicAcid = new peptideCutter({
-      'enzyme': 'formic acid'
-    });
-    peptides = formicAcid.cleave('MASSSPECPEPTIDE');
-    it('peptide should match', function() {
-      peptides[0].should.equal('MASSSPECPEPTID');
-    });
-  });
-
-  it('glutamyl endopeptidase works', function() {
-    glutamylEndopeptidase = new peptideCutter({
-      'enzyme': 'glutamyl endopeptidase'
-    });
-    peptides = glutamylEndopeptidase.cleave('VERYDIRTYWATER');
-    it('peptide should match', function() {
-      peptides[0].should.equal('RYDIRTYWAT');
-    });
-  });
-
-  it('granzyme b works', function() {
-    granzymeB = new peptideCutter({
-      'enzyme': 'granzyme b'
-    });
-    peptides = granzymeB.cleave('WATERIEPDPEPTIDE');
-    it('peptide should match', function() {
-      peptides[0].should.equal('WATERIEPD');
-    });
-  });
-
-  it('hydroxylamine works', function() {
-    hydroxylamine = new peptideCutter({
-      'enzyme': 'hydroxylamine'
-    });
-    peptides = hydroxylamine.cleave('WHYNOSLEEPINGINCLASS');
-    it('peptide should match', function() {
-      peptides[0].should.equal('WHYNOSLEEPIN');
-    });
-  });
-
-  it('iodosobenzoic acid works', function() {
-    iodosobenzoicAcid = new peptideCutter({
-      'enzyme': 'iodosobenzoic acid'
-    });
-    peptides = iodosobenzoicAcid.cleave('MASSSPECWINS');
-    it('peptide should match', function() {
-      peptides[0].should.equal('MASSSPECW');
-    });
-  });
-
-  it('lysc works', function() {
-    lysc = new peptideCutter({
-      'enzyme': 'lysc'
-    });
-    peptides = lysc.cleave('PLEASEDRINKWATER');
-    it('peptide should match', function() {
-      peptides[0].should.equal('PLEASEDRINK');
-    });
-  });
-
-  it('ntcb works', function() {
-    ntcb = new peptideCutter({
-      'enzyme': 'ntcb'
-    });
-    peptides = ntcb.cleave('PLEASEDRINKCLEAN');
-    it('peptide should match', function() {
-      peptides[0].should.equal('PLEASEDRINKC');
-    });
-  });
-
-  it('pepsin ph1.3 works', function() {
-    pepsinPH13 = new peptideCutter({
-      'enzyme': 'pepsin ph1.3'
-    });
-    peptides = pepsinPH13.cleave('MAEVPELASEMMAYYSGNEDDLFFEADGPKQMKCSF');
-    it('peptide should match', function() {
-      peptides.length.should.equal(2);
-    });
-  });
-
-  it('pepsin ph2.0 works', function() {
-    pepsinPH20 = new peptideCutter({
-      'enzyme': 'pepsin ph2.0'
-    });
-    peptides = pepsinPH20.cleave('MAEVPELASEMMAYYSGNEDDLFFEADGPKQMKCSF');
-    it('peptide should match', function() {
-      peptides.length.should.equal(1);
-    });
-  });
-
-  it('proline endopeptidase works', function() {
-    prolineEndopeptidase = new peptideCutter({
-      'enzyme': 'proline endopeptidase'
-    });
-    peptides = prolineEndopeptidase.cleave('WATERHPEPTIDEHPPEPTIDE');
-    it('peptide should match', function() {
-      peptides[0].should.equal('EPTIDEHPPEPTIDE');
-    });
-  });
-
-  it('proteinase k works', function() {
-    proteinaseK = new peptideCutter({
-      'enzyme': 'proteinase k',
-      'min_length': 4
-    });
-    peptides = proteinaseK.cleave('ILIKEMASSSPEC');
-    it('peptide should match', function() {
-      peptides[0].should.equal('SSSPE');
-    });
-  });
-
-  it('staphylococcal peptidase i works', function() {
-    staphylococcalPeptidaseI = new peptideCutter({
-      'enzyme': 'staphylococcal peptidase i',
-      'min_length': 6
-    });
-    peptides = staphylococcalPeptidaseI.cleave('ILIKEMASSSPEC');
-    it('peptide should match', function() {
-      peptides.length.should.equal('MASSSPE');
-    });
-  });
-
-  it('thermolysin works', function() {
-    thermolysin = new peptideCutter({
-      'enzyme': 'thermolysin',
-      'min_length': 7
-    });
-    peptides = thermolysin.cleave('PLEASESTAYHERE');
-    it('peptide should match', function() {
-      peptides[0].should.equal('LEASEST');
-    });
-  });
-
-  it('thrombin works', function() {
-    thrombin = new peptideCutter({
-      'enzyme': 'thrombin'
-    });
-    peptides = thrombin.cleave('PEPTIDEAAGRG');
-    it('peptide should match', function() {
-      peptides[0].should.equal('PEPTIDEAAGR');
-    });
-  });
-
-  it('trypsin works', function() {
-    trypsin = new peptideCutter({
-      'enzyme': 'trypsin'
-    });
-    peptides = trypsin.cleave('PEPTIDELIKEMEHARPISTPLAY');
-    it('peptide should match', function() {
-      peptides.length.should.equal(2);
-    });
-  });
-
-});
 
 describe('Parameters', function() {
-  it('min length works', function() {
-    minLength = new peptideCutter({
-      'enzyme': 'lysc',
-      'min_length': 10
-    });
-    peptides = minLength.cleave('AAAAAAAAAKAAAAAAAAA');
-    peptides.length.should.equal(1);
-  });
-
-  it('max length works', function() {
-    maxLength = new peptideCutter({
-      'enzyme': 'lysc',
-      'max_length': 10
-    });
-    peptides = maxLength.cleave('AAAAAAAAKAAAAAAAAAKAAAAAAAAAAA');
-    peptides.length.should.equal(2);
-  });
 
   it('missed cleavages works', function() {
     missed = new peptideCutter({

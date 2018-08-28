@@ -55,6 +55,7 @@ module.exports = class PeptideCutter {
       }
     } while (m);
     indices.push(sequence.length);
+    indices = Array.from(new Set(indices)); // To make sure we don't have any duplicates which can cause issues
 
     // If there are only 3 cleavage sites there
     // is no reason to allow more than 3 missed
