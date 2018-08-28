@@ -33,88 +33,49 @@ test('Setting Values', function(t) {
 
   t.end();
 });
-/*
+
+test('Enzymes cleaving correctly', function(t) {
+  let peptides = testEnzyme('arg-c', 5, 'ARGININE');
+  t.equal(peptides[0].sequence, 'GININE', 'arg-c works');
+
+  peptides = testEnzyme('asp-n', 6, 'MYPEPTIDE');
+  t.equal(peptides[0].sequence, 'MYPEPTI', 'asp-n works');
+
+  peptides = testEnzyme('bnps-skatole', 8, 'VERYDIRTYWATER');
+  t.equal(peptides[0].sequence, 'VERYDIRTYW', 'bnps-skatole works');
+
+  peptides = testEnzyme('caspase 1', 8, interleukinBeta);
+  t.equal(peptides.length, 1, 'correct number of peptides for caspase 1');
+  t.equal(peptides[0].sequence, 'MAEVPELASEMMAYYSGNEDDLFFEAD', 'caspase 1 works');
+
+  peptides = testEnzyme('caspase 2', 8, 'PEPTIDEDVADYTRRHL');
+  t.equal(peptides[0].sequence, 'PEPTIDEDVAD', 'caspase 2 works');
+
+  peptides = testEnzyme('caspase 3', 8, 'PEPTIDEDMQDYTRRHL');
+  t.equal(peptides[0].sequence, 'PEPTIDEDMQD', 'caspase 3 works');
+
+  peptides = testEnzyme('caspase 4', 8, 'PEPTIDELEHDAYTRRHL');
+  t.equal(peptides[0].sequence, 'PEPTIDELEHD', 'caspase 4 works');
+
+  peptides = testEnzyme('caspase 5', 8, 'PEPTIDELEHDAYTRRHL');
+  t.equal(peptides[0].sequence, 'PEPTIDELEHD', 'caspase 5 works');
+
+  peptides = testEnzyme('caspase 6', 8, 'PEPTIDEVEIDAYTRRHL');
+  t.equal(peptides[0].sequence, 'PEPTIDEVEID', 'caspase 6 works');
+
+  t.end();
+});
+
+function testEnzyme(enzyme, min_length, sequence) {
+  let cutter = new peptideCutter({
+    'enzyme': enzyme,
+    'min_length': min_length
+  });
+  let peptides = cutter.cleave(sequence);
+  return peptides;
+}
+/*  
 describe('Enzymes cleaving correctly', function() {
-  it('arg-c works', function() {
-    argc = new peptideCutter({
-      'enzyme': 'arg-c'
-    });
-    peptides = argc.cleave('ARGININE');
-    it('peptide should match', function() {
-      peptides[0].sequence.should.equal('GININE');
-    });
-  });
-
-  it('asp-n works', function() {
-    aspn = new peptideCutter({
-      'enzyme': 'asp-n'
-    });
-    peptides = aspn.cleave('MYPEPTIDE');
-    it('peptide should match', function() {
-      peptides[0].sequence.should.equal('MYPEPTI');
-    });
-  });
-
-  it('bnps-skatole works', function() {
-    bnps = new peptideCutter({
-      'enzyme': 'bnps-skatole'
-    });
-    peptides = bnps.cleave('VERYDIRTYWATER');
-    it('peptide should match', function() {
-      peptides[0].should.equal('VERYDIRTY');
-    });
-  });
-
-  it('caspase 1 works', function() {
-    caspase1 = new peptideCutter({
-      'enzyme': 'caspase 1'
-    });
-    peptides = caspase1.cleave(interleukinBeta);
-    it('peptide should match', function() {
-      peptides.length.should.equal(1);
-      peptide[0].should.equal('MAEVPELASEMMAYYSGNEDDLFFEAD');
-    });
-  });
-
-  it('caspase 2 works', function() {
-    caspase2 = new peptideCutter({
-      'enzyme': 'caspase 2'
-    });
-    peptides = caspase2.cleave('PEPTIDEDVADYTRRHL');
-    it('peptide should match', function() {
-      peptide[0].should.equal('PEPTIDEDVAD');
-    });
-  });
-
-  it('caspase 3 works', function() {
-    caspase3 = new peptideCutter({
-      'enzyme': 'caspase 3'
-    });
-    peptides = caspase3.cleave('PEPTIDEDMQDYTRRHL');
-    it('peptide should match', function() {
-      peptide[0].should.equal('PEPTIDEDMQD');
-    });
-  });
-
-  it('caspase 4 works', function() {
-    caspase4 = new peptideCutter({
-      'enzyme': 'caspase 4'
-    });
-    peptides = caspase4.cleave('PEPTIDELEHDAYTRRHL');
-    it('peptide should match', function() {
-      peptide[0].should.equal('PEPTIDELEHD');
-    });
-  });
-
-  it('caspase 5 works', function() {
-    caspase5 = new peptideCutter({
-      'enzyme': 'caspase 5'
-    });
-    peptides = caspase5.cleave('PEPTIDELEHDAYTRRHL');
-    it('peptide should match', function() {
-      peptide[0].should.equal('PEPTIDELEHD');
-    });
-  });
 
   it('caspase 6 works', function() {
     caspase6 = new peptideCutter({

@@ -5,7 +5,7 @@
     "caspase 1":     "(?<=[FWYL]\\w[HAT])D(?=[^PEDQKR])",
     "caspase 2":     "(?<=DVA)D(?=[^PEDQKR])",
     "caspase 3":     "(?<=DMQ)D(?=[^PEDQKR])",
-    "caspase 4":     "(?<=LEV)D(?=[^PEDQKR])",
+    "caspase 4":     "(?<=LE[HV])D(?=[^PEDQKR])",
     "caspase 5":     "(?<=[LW]EH)D",
     "caspase 6":     "(?<=VE[HI])D(?=[^PEDQKR])",
     "caspase 7":     "(?<=DEV)D(?=[^PEDQKR])",

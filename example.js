@@ -12,3 +12,10 @@ var peptides = cut.cleave("MRMRPAAAWKPAAAMKPAAAWRPAAAKIIIRPNNN");
 for(var i=0; i<peptides.length; i++) {
     console.log(peptides[i]);
 }
+
+let argc = new peptide_cutter({
+'enzyme': 'arg-c'
+});
+peptides = argc.cleave('ARGININE');
+console.log(argc);
+console.log(peptides);
