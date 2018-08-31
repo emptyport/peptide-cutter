@@ -64,8 +64,9 @@ module.exports = class PeptideCutter {
       num_missed = indices.length;
     }
 
-    for(var i=0; i<indices.length; i++) {
-      for(var j=i; j<indices.length; j++) {
+    let indexLength = indices.length;
+    for(var i=0; i<indexLength; i++) {
+      for(var j=i; j<indexLength; j++) {
         if(j-i-1 > num_missed) {
           break;
         }
